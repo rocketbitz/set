@@ -1,4 +1,4 @@
-# pool [![CircleCI](https://circleci.com/gh/rocketbitz/set/tree/master.svg?style=svg)](https://circleci.com/gh/rocketbitz/set/tree/master)
+# set [![CircleCI](https://circleci.com/gh/rocketbitz/set/tree/master.svg?style=svg)](https://circleci.com/gh/rocketbitz/set/tree/master)
 a simple set for gophers
 
 # installation
