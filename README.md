@@ -30,7 +30,7 @@ func main() {
     s.Contains("gopher_0")  // true
     s.Contains("gopher_2")  // false
 
-    s.Slice()  // ["gopher_0", "gopher_2"]
+    s.Slice()  // []interface{"gopher_0", "gopher_2"}
 
     s.Remove("gopher_0")
 
