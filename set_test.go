@@ -46,6 +46,8 @@ func (s *SetTestSuite) TestSet() {
 	assert.Equal(s.T(), 2, testSet.Len())
 	assert.True(s.T(), testSet.Replace("two", "three"))
 	assert.Equal(s.T(), "three", testSet.Slice()[1])
+	assert.Equal(s.T(), 1, testSet.Index("three"))
+	assert.Equal(s.T(), -1, testSet.Index("zero"))
 }
 
 func TestSetTestSuite(t *testing.T) {

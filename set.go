@@ -18,6 +18,7 @@ type Set interface {
 	Remove(interface{}) bool
 	Contains(interface{}) bool
 	Replace(interface{}, interface{}) bool
+	Index(interface{}) int
 	Slice() []interface{}
 }
 
@@ -77,6 +78,20 @@ func (s *set) Contains(value interface{}) (contained bool) {
 	_, contained = s.m[value]
 	s.RUnlock()
 	return
+}
+
+// Index of the specified value in the set. -1
+// if the set does not contain the value
+func (s *set) Index(value interface{}) int {
+	s.RLock()
+	defer s.RUnlock()
+
+	i, ok := s.m[value]
+	if ok {
+		return int(i)
+	}
+
+	return -1
 }
 
 // Replace a value in the set
