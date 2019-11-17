@@ -14,6 +14,7 @@ import (
 // sync.Pool object apply to Set.
 type Set interface {
 	Len() int
+	At(int) interface{}
 	Add(interface{})
 	Remove(interface{}) bool
 	Contains(interface{}) bool
@@ -49,6 +50,15 @@ func NewFromSlice(slc []interface{}) Set {
 // in the set.
 func (s *set) Len() int {
 	return int(s.len)
+}
+
+func (s *set) At(i int) interface{} {
+	for k, v := range s.m {
+		if int(v) == i {
+			return k
+		}
+	}
+	return nil
 }
 
 // Add a value to the set.

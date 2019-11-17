@@ -24,6 +24,8 @@ func (s *SetTestSuite) TestSet() {
 
 	testSet.Add("test1")
 	assert.Equal(s.T(), 2, testSet.Len())
+	assert.Equal(s.T(), "test1", testSet.At(1).(string))
+	assert.Nil(s.T(), testSet.At(2))
 
 	slc := testSet.Slice()
 
