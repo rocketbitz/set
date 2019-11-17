@@ -35,6 +35,9 @@ func main() {
     s.Remove("gopher_0")
 
     s.Len()  // 1
+
+    s.At(0)  // "gopher_2"
+    s.Index("gopher_2")  // 0
 }
 ```
 
