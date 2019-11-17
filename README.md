@@ -41,6 +41,12 @@ func main() {
 }
 ```
 
+if you want to handle the thread-safety yourself, then by all means:
+
+```go
+s := NewUnsafe()
+```
+
 # contribute
 
 pr's are welcome. if they're awesome, they'll get reviewed and merged. if they're not, they'll get reviewed and closed, hopefully with a kind comment as to the reason.
