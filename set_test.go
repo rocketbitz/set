@@ -14,16 +14,16 @@ type SetTestSuite struct {
 func (s *SetTestSuite) TestSet() {
 	testSet := New()
 
-	assert.Equal(s.T(), 0, int(testSet.Len()))
+	assert.Equal(s.T(), 0, testSet.Len())
 
 	testSet.Add("test0")
-	assert.Equal(s.T(), 1, int(testSet.Len()))
+	assert.Equal(s.T(), 1, testSet.Len())
 
 	testSet.Add("test1")
-	assert.Equal(s.T(), 2, int(testSet.Len()))
+	assert.Equal(s.T(), 2, testSet.Len())
 
 	testSet.Add("test1")
-	assert.Equal(s.T(), 2, int(testSet.Len()))
+	assert.Equal(s.T(), 2, testSet.Len())
 
 	slc := testSet.Slice()
 
@@ -38,9 +38,14 @@ func (s *SetTestSuite) TestSet() {
 
 	testSet.Remove("test1")
 
-	assert.Equal(s.T(), 1, int(testSet.Len()))
+	assert.Equal(s.T(), 1, testSet.Len())
 	assert.True(s.T(), testSet.Contains("test0"))
 	assert.False(s.T(), testSet.Contains("test1"))
+
+	testSet = NewFromSlice([]interface{}{"one", "two"})
+	assert.Equal(s.T(), 2, testSet.Len())
+	assert.True(s.T(), testSet.Replace("two", "three"))
+	assert.Equal(s.T(), "three", testSet.Slice()[1])
 }
 
 func TestSetTestSuite(t *testing.T) {

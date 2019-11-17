@@ -13,60 +13,94 @@ import (
 // go-routines, but all limitations of the
 // sync.Pool object apply to Set.
 type Set interface {
-	Len() uint64
+	Len() int
 	Add(interface{})
-	Remove(interface{})
+	Remove(interface{}) bool
 	Contains(interface{}) bool
+	Replace(interface{}, interface{}) bool
 	Slice() []interface{}
 }
 
 type set struct {
-	m   sync.Map
-	len uint64
+	sync.RWMutex
+	m   map[interface{}]int32
+	len int32
 }
 
 // New declares a new set.
 func New() Set {
 	return &set{
-		m: sync.Map{},
+		m: make(map[interface{}]int32),
 	}
+}
+
+// NewFromSlice declares a new set from a
+// supplied slice.
+func NewFromSlice(slc []interface{}) Set {
+	s := New()
+	for _, v := range slc {
+		s.Add(v)
+	}
+	return s
 }
 
 // Len returns the number of values stored
 // in the set.
-func (s *set) Len() uint64 {
-	return s.len
+func (s *set) Len() int {
+	return int(s.len)
 }
 
 // Add a value to the set.
 func (s *set) Add(value interface{}) {
-	if _, loaded := s.m.LoadOrStore(value, struct{}{}); !loaded {
-		atomic.AddUint64(&s.len, 1)
+	s.Lock()
+	if _, loaded := s.m[value]; !loaded {
+		s.m[value] = s.len
+		atomic.AddInt32(&s.len, 1)
 	}
+	s.Unlock()
 }
 
 // Remove a value from the set.
-func (s *set) Remove(value interface{}) {
-	defer atomic.CompareAndSwapUint64(&s.len, s.len, s.len-1)
-	s.m.Delete(value)
+func (s *set) Remove(value interface{}) (removed bool) {
+	s.Lock()
+	_, removed = s.m[value]
+	delete(s.m, value)
+	atomic.CompareAndSwapInt32(&s.len, s.len, s.len-1)
+	s.Unlock()
+	return
 }
 
 // Contains returns true if the supplied value
 // exists in the set, otherwise false.
 func (s *set) Contains(value interface{}) (contained bool) {
-	_, contained = s.m.Load(value)
+	s.RLock()
+	_, contained = s.m[value]
+	s.RUnlock()
+	return
+}
+
+// Replace a value in the set
+func (s *set) Replace(old, new interface{}) (replaced bool) {
+	s.Lock()
+	if v, loaded := s.m[old]; loaded {
+		delete(s.m, old)
+		s.m[new] = v
+		replaced = true
+	}
+	s.Unlock()
 	return
 }
 
 // Slice returns the values held in the set
 // in the form of a Go slice object.
 func (s *set) Slice() (slc []interface{}) {
-	slc = make([]interface{}, 0, s.len)
+	s.RLock()
+	slc = make([]interface{}, s.len)
 
-	s.m.Range(func(key, value interface{}) bool {
-		slc = append(slc, key)
-		return true
-	})
+	for k, v := range s.m {
+		slc[v] = k
+	}
 
+	s.RUnlock()
 	return
 }
